@@ -11,6 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using StarWarsAPI.Models;
+using StarWarsAPI.Domain;
+using StarWarsAPI.Interfaces;
+using System.Data.SqlClient;
+using StarWarsAPI.Repository;
+using System.Data;
 
 namespace StarWarsAPI
 {
@@ -26,7 +32,14 @@ namespace StarWarsAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = Configuration.GetConnectionString("StarWarsDb");
 
+            services.AddScoped<ICharacterLogic, CharacterLogic>();
+
+            services.AddScoped<IDbConnection>(db => new SqlConnection(connectionString));
+            services.AddScoped<IStarWarsAPIRepository, StarWarsAPIRepository>();
+
+            services.AddCors();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
